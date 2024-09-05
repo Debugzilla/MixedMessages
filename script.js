@@ -1,48 +1,65 @@
 function generateRandomNumber(num) {
-  // Gets a random number from 0 to num - 1
+  // Cojemos un numero aleeatorio de 0 a -1 
   return Math.floor(Math.random() * num);
 }
 
 const collectiveWisdom = {
-  signInfo: ['star', 'moon', 'sun', 'comet'],
-  fortuneOutput: ['terrible luck', 'bad luck', 'ok luck', 'good luck', 'great luck'],
-  advice: ['go out and eat', 'not read this', 'play more', 'trust no one']
+  signInfo: ['libra', 'virgo', 'tauro', 'cancer', 'aries'],
+  fortuneOutput: ['terrible suerte', 'mala suerte', 'suerte', 'buena suerte', 'muy afortunado'],
+  advice: ['Vete a comer', 'no leas esto', 'Juega más', 'Solo una vez más']
 };
 
-// Function to generate a new set of messages
-function generatePersonalWisdom() {
-  // Store the 'wisdom' in an array
-  let personalWisdom = [];
+// Mensaje especifico para cada tipo de signo zodiacal
+const zodiacMessages = {
+  libra: 'Hoy es un buen día para tomar decisiones equilibradas.',
+  virgo: 'Presta atención a los detalles en tu trabajo.',
+  tauro: 'Disfruta de las pequeñas cosas de la vida.',
+  cancer: 'Dedica tiempo a tu familia y seres queridos.',
+  aries: 'Es un gran momento para tomar la iniciativa.'
+};
 
-  // Iterate over the object
+// Funcion para generar nuevos mensajes 
+function generatePersonalWisdom() {
+  // Guardar Wisdom en un array 
+  let personalWisdom = [];
+  
+  // Iterar sobre el objeto 
   for (let prop in collectiveWisdom) {
     let optionIdx = generateRandomNumber(collectiveWisdom[prop].length);
+    let message;
 
-    // Use the object's properties to customize the message being added to personalWisdom  
+    // Usar las propiedades de los objetos para personalizar el mensaje que se ha añadido a personalWisdom   
     switch (prop) {
       case 'signInfo':
-        personalWisdom.push(`Your sign right now is a "${collectiveWisdom[prop][optionIdx]}".`);
+        const sign = collectiveWisdom[prop][optionIdx];
+        message = `Tu signo del zodiaco es: "${sign}".`;
+        // Añadir un mensaje especifico en funcion del signo del zodiaco 
+        if (zodiacMessages[sign]) {
+          message += ` ${zodiacMessages[sign]}`;
+        }
         break;
       case 'fortuneOutput':
-        personalWisdom.push(`You are having: "${collectiveWisdom[prop][optionIdx]}".`);
+        message = `Tu tienes: "${collectiveWisdom[prop][optionIdx]}".`;
         break;
       case 'advice':
-        personalWisdom.push(`You should: "${collectiveWisdom[prop][optionIdx]}".`);
+        message = `Tu debes: "${collectiveWisdom[prop][optionIdx]}".`;
         break;
       default:
-        personalWisdom.push('There is not enough info.');
+        message = 'No tengo suficiente información.';
     }
+    
+    personalWisdom.push(message);
   }
   
   return personalWisdom;
 }
 
 function formatWisdom(wisdom) {
-  // Add ASCII or emojis if desired
+  // Añadir ASCII o emojis si es oportuno
   const formatted = wisdom.join('\n');
   console.log(formatted);
 }
 
-// Generate and format a new set of messages
+// Generar y formar nuevos mensajes 
 const wisdom = generatePersonalWisdom();
 formatWisdom(wisdom);
