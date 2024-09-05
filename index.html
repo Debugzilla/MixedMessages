@@ -55,6 +55,8 @@
         <select id="language" name="language">
           <option value="es">Español</option>
           <option value="en">Inglés</option>
+          <option value="cat">Catalán</option>
+          <option value="eus">Euskera</option>
         </select>
       </div>
       <div class="form-group">
@@ -75,14 +77,29 @@
     const messages = {
       es: {
         signInfo: ['libra', 'virgo', 'tauro', 'cancer', 'aries'],
-        fortuneOutput: ['terrible suerte 😔', 'mala suerte 😟', 'suerte 🙂', 'buena suerte 😀', 'muy afortunado 🌟'],
+        fortuneOutput: ['tienes muy mala suerte 😔', ' tienes mala suerte 😟', 'tienes suerte 🙂', 'tienes buena suerte 😀', 'tienes muy buena suerte 🌟'],
         advice: ['Vete a comer 🍽️', 'no leas esto 🚫', 'Juega más 🎮', 'Solo una vez más 🎲']
       },
       en: {
         signInfo: ['libra', 'virgo', 'taurus', 'cancer', 'aries'],
-        fortuneOutput: ['terrible luck 😔', 'bad luck 😟', 'ok luck 🙂', 'good luck 😀', 'very lucky 🌟'],
+        fortuneOutput: ['you have very bad luck 😔', 'you have bad luck 😟', 'you have luck 🙂', 'you have good luck 😀', 'you have very good luck 🌟'],
         advice: ['Go out and eat 🍽️', 'don\'t read this 🚫', 'Play more 🎮', 'Just one more time 🎲']
+      },
+      cat: {
+        signInfo: ['lliura', 'virgo', 'tauro', 'cancer', 'aries'],
+        fortuneOutput: ['tens molt mala sort 😔', 'tens mala sort 😟', 'tens sort 🙂', 'tens bona sort 😀', 'tens molt bona sort 🌟'],
+        advice: ['Ves a menjar 🍽️', 'no llegeixis això 🚫', 'juga més 🎮', 'només una vegada més 🎲']
+      },
+      eus: {
+        signInfo: ['libra', 'birge', 'tauro', 'minbizia', 'ardi'],
+        fortuneOutput: ['Oso zorte txarra duzu 😔', 'Zorte txarra duzu 😟', 'Zortea duzu 🙂', 'Zorte ona duzu 😀', 'Oso zorte ona duzu 🌟'],
+        advice: ['Joan bazkaltzera 🍽️', 'Ez irakurri hau 🚫', 'Jolastu gehiago 🎮', 'Aukera bat gehiago 🎲']
       }
+      
+
+
+
+
     };
 
     const zodiacMessages = {
@@ -99,7 +116,24 @@
         taurus: 'Enjoy the little things in life.',
         cancer: 'Spend time with your family and loved ones.',
         aries: 'It’s a great time to take initiative.'
+      },
+      cat: {
+        libra: 'Avui és un bon dia per prendre decisions equilibrades.',
+        virgo: 'Para atenció als detalls a la teva feina.',
+        tauro: 'Gaudeix de les petites coses de la vida.',
+        cancer: 'Dedica temps a la teva família i éssers estimats.',
+        aries: 'És un gran moment per prendre la iniciativa.'
+      },
+      eus: {
+        libra: 'Gaur egungo eguna erabaki orekatutakoak hartzeko eguna da.',
+        virgo: 'Arretaz jarraitu zure lanaren xehetasunei.',
+        tauro: 'Bizitzako gauza txikiez gozatu.',
+        cancer: 'Eskaini denbora zure familiari eta maite dituzunei.',
+        aries: 'Momentu bikaina da ekintza hartu ahal izateko.'
       }
+      
+      
+
     };
 
     const timeOfDayMessages = {
@@ -112,7 +146,20 @@
         morning: 'Good morning! It’s a great time to start your day with positive energy.',
         afternoon: 'Good afternoon! Make the most of the rest of your day to achieve your goals.',
         evening: 'Good evening! Relax and enjoy a well-deserved rest.'
+      },
+      cat: {
+        morning: 'Bon dia! És un bon moment per començar el dia amb energia positiva.',
+        afternoon: 'Bona tarda! Aprofita el que queda del dia per aconseguir els teus objectius.',
+        evening: 'Bona nit! Relaxa´t i gaudeix d´un merescut descans.'
+      },
+      eus: {
+        morning: 'Egun on! Eguna positiboki hasteko momentu egokia da.',
+        afternoon: 'Arratsalde on! Egunaren gainerakoa aprobetxatu zure helburuak lortzeko.',
+        evening: 'Gabon! Lasaitu zaitez eta gozatu merezitako atsedenaz.'
       }
+      
+
+
     };
 
     function getCurrentDateTime() {
@@ -123,7 +170,7 @@
     function getTimeOfDay() {
       const hour = new Date().getHours();
       if (hour < 12) return 'morning';
-      if (hour < 18) return 'afternoon';
+      if (hour < 20) return 'afternoon';
       return 'evening';
     }
 
@@ -168,11 +215,31 @@
             break;
           case 'fortuneOutput':
             optionIdx = generateRandomNumber(collectiveWisdom[prop].length);
-            message = `Tu tienes: "${collectiveWisdom[prop][optionIdx]}".`;
+            if  (language === 'es') {
+              message = `Parece que hoy ${collectiveWisdom[prop][optionIdx]}".`;
+
+            } else if (language === 'en') {
+              message = `It seems like today ${collectiveWisdom[prop][optionIdx]}.`;
+            } else if (language === 'cat') {
+              message =  `Sembla que avui ${collectiveWisdom[prop][optionIdx]}.`;
+            } else if (language === 'eus') {
+              message = `Itxura denez gaur ${collectiveWisdom[prop][optionIdx]}.`;
+            }
+           
             break;
           case 'advice':
             optionIdx = generateRandomNumber(collectiveWisdom[prop].length);
-            message = `Tu debes: "${collectiveWisdom[prop][optionIdx]}".`;
+            if (language === 'es') {
+              message = `Un buen consejo para ti sería: "${collectiveWisdom[prop][optionIdx]}".`;
+
+            } else if (language === 'en') {
+              message = `A good piece of advice for you is: "${collectiveWisdom[prop][optionIdx]}".`;
+            } else if (language === 'cat') {
+              message = `Un bon consell per a tu seria: "${collectiveWisdom[prop][optionIdx]}".`;
+            } else if (language === 'eus') {
+              message = `Zuretzat aholku on bat izango litzateke: "${collectiveWisdom[prop][optionIdx]}".`;
+            }
+            
             break;
           default:
             message = 'No tengo suficiente información.';
