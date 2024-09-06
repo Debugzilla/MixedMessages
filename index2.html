@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Generador de Mensajes</title>
   <style>
-    /* Estilos basicos para la página */
+    /* Estilos basicos para la pagina */
     body {
       font-family: Arial, sans-serif;
       margin: 20px;
@@ -30,7 +30,7 @@
       display: block;
       margin-bottom: 5px;
     }
-    .form-group select, .form-group input, .form-group button {
+    .form-group select, .form-group input {
       width: 100%;
       padding: 8px;
       border-radius: 4px;
@@ -51,7 +51,7 @@
   <h1>Generador de Mensajes</h1>
   <div class="container">
     <form id="messageForm">
-      <!--Selección de idioma -->
+        <!-- seleccion de idioma -->
       <div class="form-group">
         <label for="language">Selecciona el idioma:</label>
         <select id="language" name="language">
@@ -61,18 +61,21 @@
           <option value="eus">Euskera</option>
         </select>
       </div>
-      <!-- Entrada para el signo zodiacal -->
+      <!--- Entrada para el signo del zodiaco -->
       <div class="form-group">
         <label for="sign">Ingresa tu signo zodiacal (o déjalo en blanco para aleatorio):</label>
         <input type="text" id="sign" name="sign" placeholder="libra, virgo, tauro, etc.">
       </div>
-      <!-- Entrada para mostrar información del clima -->
-      <div class="form-group">
-        <label for="weather">¿Quieres saber el clima actual? (Sí/No):</label>
-        <input type="text" id="weather" name="weather" placeholder="Sí o No">
-      </div>
 
-      <!-- Boton para generar los mensajes-->
+      <!---Entrada para mostrar info del clima-->
+      <div class="form-group">
+        <label for="weather">¿Quieres saber el estado del tiempo actual?</label>
+        <select id="weather" name="weather">
+            <option value="yes">Sí</option>
+            <option value="no">No</option>
+        </select>
+      </div>
+      <!--- Boton para generar los mensajes -->
       <button type="submit">Generar Mensajes</button>
     </form>
     <!-- Contenedor para mostrar los resultados -->
@@ -80,15 +83,16 @@
   </div>
 
   <script>
-   
+
     //url de la API para obtener el clima
     const weatherApiUrl = 'https://www.el-tiempo.net/api/json/v2/provincias/08/municipios/08019';
 
-    //funcion para generar un numero aleatorio entre 0 y num-1
     function generateRandomNumber(num) {
+      // Devuelve un numero aleatorio de 0 a num - 1
       return Math.floor(Math.random() * num);
     }
-    //mensajes de configuración para diferentes idiomas
+
+    //mensajes de configuracion para diferentes idiomas
     const messages = {
       es: {
         signInfo: ['libra', 'virgo', 'tauro', 'cancer', 'aries'],
@@ -110,6 +114,7 @@
         fortuneOutput: ['Oso zorte txarra duzu 😔', 'Zorte txarra duzu 😟', 'Zortea duzu 🙂', 'Zorte ona duzu 😀', 'Oso zorte ona duzu 🌟'],
         advice: ['Joan bazkaltzera 🍽️', 'Ez irakurri hau 🚫', 'Jolastu gehiago 🎮', 'Aukera bat gehiago 🎲']
       }
+      
     };
 
     //mensajes basados en el signo del zodiaco
@@ -142,9 +147,11 @@
         cancer: 'Eskaini denbora zure familiari eta maite dituzunei.',
         aries: 'Momentu bikaina da ekintza hartu ahal izateko.'
       }
-    };
+      
+      
 
-    //Mensajes basados en la hora del día
+    };
+    //mensajes basados en la hora del día
     const timeOfDayMessages = {
       es: {
         morning: '¡Buenos días! Es un buen momento para empezar el día con energía positiva.',
@@ -166,67 +173,143 @@
         afternoon: 'Arratsalde on! Egunaren gainerakoa aprobetxatu zure helburuak lortzeko.',
         evening: 'Gabon! Lasaitu zaitez eta gozatu merezitako atsedenaz.'
       }
+
     };
 
-    //función para obtener la información del clima
+    //Funcion añadida nueva el 6-9-2024 para obtener info del clima
     async function getWeather() {
-      try {
-        const response = await fetch(weatherApiUrl);
-        const data = await response.json();
-        const temperature = data.temperatura_actual;
-        const stateSkyDescription = data.stateSky.description;
-        if (temperature) {
-          return `En Barcelona, el estado del cielo es "${stateSkyDescription}" y la temperatura es ${temperature}°C.`;
-        } else {
-          return 'No se encontró información del clima para Barcelona.';
+        try {
+          const response = await fetch(weatherApiUrl);
+          const data = await response.json();
+          const temperature = data.temperatura_actual;
+          const stateSkyDescription = data.stateSky.description;
+          if (temperature) {
+            return `En Barcelona, el estado del cielo es "${stateSkyDescription}" y la temperatura es ${temperature}°C.`;
+          } else {
+            return 'No se encontró información del clima para Barcelona.';
+          }
+        } catch (error) {
+          console.error('Error fetching weather data:', error);
+          return 'No se pudo obtener la información del clima.';
         }
-      } catch (error) {
-        console.error('Error fetching weather data:', error);
-        return 'No se pudo obtener la información del clima.';
       }
+    
+
+
+
+
+    function getCurrentDateTime() {
+      const now = new Date();
+      return now.toLocaleString();
     }
 
-    function generateRandomNumber(num) {
-      return Math.floor(Math.random() * num);
+    function getTimeOfDay() {
+      const hour = new Date().getHours();
+      if (hour < 12) return 'morning';
+      if (hour < 20) return 'afternoon';
+      return 'evening';
     }
-    //funcion para generar el mensaje de sabiduria
-    async function generatePersonalWisdom(language = 'es', showWeather = false) {
+
+    function generatePersonalWisdom(language = 'es', userSign = null, showWeather = false) {
       let personalWisdom = [];
       const dateTime = getCurrentDateTime();
       const timeOfDay = getTimeOfDay();
       
       if (!messages[language]) {
-        language = 'es';
+        console.error('Language not supported.');
+        return;
       }
 
-      const zodiacSign = document.getElementById('sign').value.trim().toLowerCase();
-      const zodiacMessage = zodiacMessages[language][zodiacSign] || '';
+     
 
-      const fortuneMessage = messages[language].fortuneOutput[generateRandomNumber(5)];
-      const adviceMessage = messages[language].advice[generateRandomNumber(4)];
-      const timeOfDayMessage = timeOfDayMessages[language][timeOfDay];
-      const message = `${dateTime} ${zodiacMessage} ${fortuneMessage} ${adviceMessage} ${timeOfDayMessage}`;
+      const collectiveWisdom = messages[language];
+      const zodiacMessagesInLang = zodiacMessages[language];
+      const timeOfDayMessagesInLang = timeOfDayMessages[language];
+      
+      const userSignLower = userSign ? userSign.toLowerCase() : '';
+      const validSigns = collectiveWisdom.signInfo;
+      const isValidSign = validSigns.includes(userSignLower);
+      
+      for (let prop in collectiveWisdom) {
+        let optionIdx;
+        let message;
+        
+        if (prop === 'signInfo') {
+          message = `${timeOfDayMessagesInLang[timeOfDay]} `;
+        }
 
-      if (showWeather) {
-        const weatherInfo = await getWeather();
-        personalWisdom.push(`${message} ${weatherInfo}`);
-      } else {
-        personalWisdom.push(message);
+        switch (prop) {
+          case 'signInfo':
+            if (userSignLower && isValidSign) {
+                if(language === 'es') {
+                    message += `Tu signo del zodiaco es: "${userSignLower}". ${zodiacMessagesInLang[userSignLower] || 'No tengo información específica para tu signo.'}`;
+
+                } else if (language === "en") {
+                    message += `Your zodiac sign is: "${userSignLower}". ${zodiacMessagesInLang[userSignLower] || 'No tengo información específica para tu signo.'}`;
+                } else if (language === 'cat') {
+                    message += `El teu signe de zodiac es: "${userSignLower}". ${zodiacMessagesInLang[userSignLower] || 'No tengo información específica para tu signo.'}`;
+                } else if (language === 'eus') {
+                    message += `Zure zodiako zeinua da: "${userSignLower}". ${zodiacMessagesInLang[userSignLower] || 'No tengo información específica para tu signo.'}`;
+                }
+              
+            } else {
+              optionIdx = generateRandomNumber(collectiveWisdom[prop].length);
+              const sign = collectiveWisdom[prop][optionIdx];
+              if (language === 'es') {
+                message += `Tu signo del zodiaco es: "${sign}".`;
+              } else if (language === 'en') {
+                message += `Your zodiac sign is: "${sign}".`;
+              } else if (language === 'cat') {
+                message += `El teu signe de zodiac es: "${sign}".`;
+              } else if (language === 'eus') {
+                message += `Zure zodiako zeinua da: "${sign}".`;
+              }
+              
+              if (zodiacMessagesInLang[sign]) {
+                message += ` ${zodiacMessagesInLang[sign]}`;
+              }
+            }
+            break;
+          case 'fortuneOutput':
+            optionIdx = generateRandomNumber(collectiveWisdom[prop].length);
+            if  (language === 'es') {
+              message = `Parece que hoy ${collectiveWisdom[prop][optionIdx]}".`;
+
+            } else if (language === 'en') {
+              message = `It seems like today ${collectiveWisdom[prop][optionIdx]}.`;
+            } else if (language === 'cat') {
+              message =  `Sembla que avui ${collectiveWisdom[prop][optionIdx]}.`;
+            } else if (language === 'eus') {
+              message = `Itxura denez gaur ${collectiveWisdom[prop][optionIdx]}.`;
+            }
+           
+            break;
+          case 'advice':
+            optionIdx = generateRandomNumber(collectiveWisdom[prop].length);
+            if (language === 'es') {
+              message = `Un buen consejo para ti sería: "${collectiveWisdom[prop][optionIdx]}".`;
+
+            } else if (language === 'en') {
+              message = `A good piece of advice for you is: "${collectiveWisdom[prop][optionIdx]}".`;
+            } else if (language === 'cat') {
+              message = `Un bon consell per a tu seria: "${collectiveWisdom[prop][optionIdx]}".`;
+            } else if (language === 'eus') {
+              message = `Zuretzat aholku on bat izango litzateke: "${collectiveWisdom[prop][optionIdx]}".`;
+            }
+            
+            break;
+          default:
+            message = 'No tengo suficiente información.';
+        }
+        
+        personalWisdom.push(`[${dateTime}] ${message}`);
       }
-
+      
       return personalWisdom;
     }
 
-    function getCurrentDateTime() {
-      const now = new Date();
-      return `${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
-    }
-
-    function getTimeOfDay() {
-      const hours = new Date().getHours();
-      if (hours < 12) return 'morning';
-      if (hours < 18) return 'afternoon';
-      return 'evening';
+    function formatWisdom(wisdom) {
+      return wisdom.map(msg => `<div class="message">${msg}</div>`).join('');
     }
 
     function saveMessagesToLocalStorage(messages) {
@@ -234,40 +317,27 @@
     }
 
     function getMessagesFromLocalStorage() {
-      const messages = localStorage.getItem('savedMessages');
-      return messages ? JSON.parse(messages) : [];
+      const savedMessages = localStorage.getItem('savedMessages');
+      return savedMessages ? JSON.parse(savedMessages) : [];
     }
 
-    function formatWisdom(messages) {
-      return messages.map(message => `<div class="message">${message}</div>`).join('');
-    }
-
-    document.getElementById('messageForm').addEventListener('submit', async (event) => {
+    document.getElementById('messageForm').addEventListener('submit', function(event) {
       event.preventDefault();
+      
       const language = document.getElementById('language').value;
-      const showWeather = document.getElementById('weather').value.toLowerCase() === 'sí';
-      const wisdom = await generatePersonalWisdom(language, showWeather);
-
+      const userSign = document.getElementById('sign').value.trim();
+      const wisdom = generatePersonalWisdom(language, userSign);
+      
       saveMessagesToLocalStorage(wisdom);
       const savedWisdom = getMessagesFromLocalStorage();
       document.getElementById('results').innerHTML = formatWisdom(savedWisdom);
     });
 
-    function startPeriodicUpdates() {
-      setInterval(async () => {
-        const language = document.getElementById('language').value;
-        const showWeather = document.getElementById('weather').value.toLowerCase() === 'sí';
-        const wisdom = await generatePersonalWisdom(language, showWeather);
-
-        saveMessagesToLocalStorage(wisdom);
-        const savedWisdom = getMessagesFromLocalStorage();
-        document.getElementById('results').innerHTML = formatWisdom(savedWisdom);
-      }, 60000); // 60000 ms = 1 minuto
+    // Initialize with saved messages if available
+    const initialMessages = getMessagesFromLocalStorage();
+    if (initialMessages.length > 0) {
+      document.getElementById('results').innerHTML = formatWisdom(initialMessages);
     }
-
-    // Iniciar actualizaciones periódicas
-    startPeriodicUpdates();
   </script>
 </body>
 </html>
-
